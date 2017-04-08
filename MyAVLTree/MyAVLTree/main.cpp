@@ -6,9 +6,12 @@ void main() {
 	int x=0;
 	AvlTree<int> at1;
 	do{
+		printf_s("\n----------------------------");
+		printf_s("\nThis is your tree.");
 		at1.listAll();
 		x = -1;
-		printf_s("\nThere are several selections, input number to use relevant function:\n1.Insert a number or a series of number to the tree.\n2.Remove a number or a series of number to the tree.\n3.Search for the Nth element in a ascending order.\n4.Clear it up, make it Empty.\n5.Check if tree contians the paticular element.\n\nPress ESC to Exit!\n\n");
+		printf_s("\nThere are several selections, input number to use relevant function:\n1.Insert a number or a series of number to the tree.\n2.Remove a number or a series of number to the tree.\n3.Search for the Nth element in a ascending order.\n4.Clear it up, make it Empty.\n5.Check if tree contians the paticular element.\n6.Check how many element is less than the given one.\nPress ESC to Exit!");
+		printf_s("\n----------------------------");
 		switch (_getch()) {
 		case 27:exit(0); break;
 		case '1': {
@@ -64,11 +67,21 @@ void main() {
 			break;
 		}
 		case '5': {
+			printf_s("\nPlease Input number n:");
 			scanf_s("%d", &x);
 			at1.contians(x);
+			break;
 		}
+		case '6': {
+			printf_s("\nPlease Input number k:");
+			scanf_s("%d", &x);
+			int n = at1.numLessThanK(x);
+			printf_s("\nThere is %d element less than %d", n, x);
+			break;
 		}
-		printf_s("\nPress Any Botton to continue.\n");
-		_getch();
-	} while (true);
+		default:printf_s("\nNothing done."); break;
+		}
+		printf_s("\n----------------------------");
+		printf_s("\nPress Any Botton to continue...");
+	} while (_getch()!=27);
 }

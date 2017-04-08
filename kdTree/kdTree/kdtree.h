@@ -1,28 +1,23 @@
 #pragma once
 #include<iostream>
+#include<vector>
 using namespace std;
 
 template <typename Comparable>
-class AvlTree {
-public :
-	AvlTree() :root(NULL) {
+class kdTree {
+public:
+	kdTree(int n) :root(NULL),k(n) {
 
 	}
-	class AvlNode {
+	class kdNode {
 	public:
-		Comparable element;
-		AvlNode *left;
-		AvlNode *right;
-		int height;
-
-		AvlNode(const Comparable & theElement, AvlNode*lt, AvlNode*rt, int h = 0) :element(theElement), left(lt), right(rt), height(h) {}
+		vector<Comparable> data;
+		kdNode *left;
+		kdNode *right;
+		kdNode(const vector<Comparable> & theElement, kdNode*lt, kdNode*rt, int h = 0) :element(theElement), left(lt), right(rt){}
 	};
-	int height(AvlNode *t = root)const {
-		return t == NULL ? -1 : t->height;
-	}
 	void insert(const Comparable &x) {
 		insert(x, root);
-	
 	}
 	void remove(const Comparable &x) {
 		remove(x, root);
@@ -37,7 +32,7 @@ public :
 		}
 		printf_s("\n----------------------------");
 	}
-	void list(AvlNode*&t, int depth)const {
+	void list(kdNode*&t, int depth)const {
 		if (t != NULL) {
 			list(t->right, depth + 1);
 			printf_s("\n");
@@ -60,21 +55,21 @@ public :
 	}
 	void search(int &k) {
 		int n = 0;
-		AvlNode *p = search(k, n, root);
+		kdNode *p = search(k, n, root);
 		if (p == NULL)printf_s("\nError!");
 		else {
 			printf_s("The %dth element is %d, the tree node is:\n", k, p->element);
 			list(p, 1);
 		}
 	}
-	int numLessThanK(int &k){
+	int numLessThanK(int &k) {
 		int n = 0;
-		if(root!=NULL)
-		numLessThanK(k, n, root);
+		if (root != NULL)
+			numLessThanK(k, n, root);
 		return n;
 	}
 private:
-	void numLessThanK(int &k, int &n, AvlNode *&t)const {
+	void numLessThanK(int &k, int &n, kdNode *&t)const {
 		if (t->element < k) {
 			n++;
 			if (t->right != NULL)numLessThanK(k, n, t->right);
@@ -83,8 +78,8 @@ private:
 			numLessThanK(k, n, t->left);
 		}
 	}
-	AvlNode * search(int &k, int &n, AvlNode *&t)const {
-		AvlNode *p = NULL;
+	kdNode * search(int &k, int &n, kdNode *&t)const {
+		kdNode *p = NULL;
 		if (t->left != NULL) {
 			p = search(k, n, t->left);
 		}
@@ -98,7 +93,7 @@ private:
 		return p;
 
 	}
-	bool contains(const Comparable &x,AvlNode *t)const {
+	bool contains(const Comparable &x, kdNode *t)const {
 		if (t == NULL)return false;
 		else if (x < t->element)
 			return contains(x, t->left);
@@ -106,7 +101,7 @@ private:
 			return contains(x, t->right);
 		else return true;
 	}
-	void makeEmpty(AvlNode*&t) {
+	void makeEmpty(kdNode*&t) {
 		if (t != NULL) {
 			makeEmpty(t->left);
 			makeEmpty(t->right);;
@@ -114,9 +109,9 @@ private:
 			t = NULL;
 		}
 	}
-	void insert(const Comparable &x, AvlNode *&t) {
+	void insert(const Comparable &x, kdNode *&t) {
 		if (t == NULL) {
-			t = new AvlNode(x, NULL, NULL);
+			t = new kdNode(x, NULL, NULL);
 		}
 		else if (x < t->element) {
 			insert(x, t->left);
@@ -137,39 +132,39 @@ private:
 		}
 		t->height = max(height(t->left), height(t->right)) + 1;
 	}
-	void remove(const Comparable &x, AvlNode *&t) {
+	void remove(const Comparable &x, kdNode *&t) {
 		if (t != NULL) {
 			if (x < t->element) {
 				remove(x, t->left);
 				if (height(t->left) - height(t->right) == -2) {
-					if (height(t->right) - height(t->right->left)>=2)rotateWithRightChild(t);
+					if (height(t->right) - height(t->right->left) >= 2)rotateWithRightChild(t);
 					else doubleWithRightChild(t);
 				}
 			}
 			else if (t->element < x) {
 				remove(x, t->right);
 				if (height(t->left) - height(t->right) == 2) {
-					if (height(t->left) - height(t->left->right)>=2)rotateWithLeftChild(t);
+					if (height(t->left) - height(t->left->right) >= 2)rotateWithLeftChild(t);
 					else doubleWithLeftChild(t);
 				}
 			}
 			else {
 				if (t->right != NULL) {
-					AvlNode *oldNode = t;
+					kdNode *oldNode = t;
 					t = findMinAndRemove(t->right);
 					t->left = oldNode->left;
 					if (t == oldNode->right)t->right = NULL;
 					else
-					t->right = oldNode->right;
+						t->right = oldNode->right;
 					delete oldNode;
 				}
 				else if (t->left != NULL) {
-					AvlNode *oldNode = t;
+					kdNode *oldNode = t;
 					t = findMaxAndRemove(t->left);
 					t->left = oldNode->left;
 					if (t == oldNode->left)t->left = NULL;
 					else
-					t->right = oldNode->right;
+						t->right = oldNode->right;
 					delete oldNode;
 				}
 				else {
@@ -177,12 +172,12 @@ private:
 					t = NULL;
 				}
 			}
-			if(t!=NULL)
-			t->height = max(height(t->left), height(t->right)) + 1;
+			if (t != NULL)
+				t->height = max(height(t->left), height(t->right)) + 1;
 		}
 	}
-	AvlNode* findMinAndRemove(AvlNode*t) {
-		AvlNode*p;
+	kdNode* findMinAndRemove(kdNode*t) {
+		kdNode*p;
 		if (t->left == NULL) {
 			p = t;
 		}
@@ -192,15 +187,15 @@ private:
 				t->left = p->right;
 			}
 			if (height(t->left) - height(t->right) == -2) {
-				if (height(t->right)-height(t->right->left)>=2)rotateWithRightChild(t);
+				if (height(t->right) - height(t->right->left) >= 2)rotateWithRightChild(t);
 				else doubleWithRightChild(t);
 			}
 		}
 		t->height = max(height(t->left), height(t->right)) + 1;
 		return p;
 	}
-	AvlNode* findMaxAndRemove(AvlNode*t) {
-		AvlNode*p;
+	kdNode* findMaxAndRemove(kdNode*t) {
+		kdNode*p;
 		if (t->right == NULL) {
 			p = t;
 		}
@@ -210,38 +205,39 @@ private:
 				t->right = p->left;
 			}
 			if (height(t->left) - height(t->right) == 2) {
-				if (height(t->left) - height(t->left->right)>=2)rotateWithLeftChild(t);
+				if (height(t->left) - height(t->left->right) >= 2)rotateWithLeftChild(t);
 				else doubleWithLeftChild(t);
 			}
 		}
 		t->height = max(height(t->left), height(t->right)) + 1;
 		return p;
 	}
-	void rotateWithLeftChild(AvlNode * & k2) {
-		AvlNode*k1 = k2->left;
+	void rotateWithLeftChild(kdNode * & k2) {
+		kdNode*k1 = k2->left;
 		k2->left = k1->right;
 		k1->right = k2;
 		k2->height = max(height(k2->left), height(k2->right)) + 1;
 		k1->height = max(height(k1->left), k2->height) + 1;
 		k2 = k1;
 	}
-	void rotateWithRightChild(AvlNode * & k2) {
-		AvlNode*k1 = k2->right;
+	void rotateWithRightChild(kdNode * & k2) {
+		kdNode*k1 = k2->right;
 		k2->right = k1->left;
 		k1->left = k2;
 		k2->height = max(height(k2->left), height(k2->right)) + 1;
 		k1->height = max(height(k1->left), k2->height) + 1;
 		k2 = k1;
 	}
-	void doubleWithLeftChild(AvlNode * & k3) {
+	void doubleWithLeftChild(kdNode * & k3) {
 		rotateWithRightChild(k3->left);
 		rotateWithLeftChild(k3);
 	}
-	void doubleWithRightChild(AvlNode * & k3) {
+	void doubleWithRightChild(kdNode * & k3) {
 		rotateWithLeftChild(k3->right);
 		rotateWithRightChild(k3);
 	}
-	AvlNode *root;
+	kdNode *root;
+	int k;
 };
 int max(int a, int b) {
 	return a < b ? b : a;

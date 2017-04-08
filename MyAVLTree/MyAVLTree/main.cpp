@@ -28,6 +28,9 @@ void main() {
 					x = -1;
 				}
 				else if (b == 27)exit(0);
+				else {
+					printf_s("\b \b");
+				}
 			}
 			if (b != ' ')at1.insert(x);
 			
@@ -49,6 +52,9 @@ void main() {
 					x = -1;
 				}
 				else if (b == 27)exit(0);
+				else {
+					printf_s("\b \b");
+				}
 			}
 			if (b != ' ')at1.remove(x);
 			printf_s("\nRemove completed!");

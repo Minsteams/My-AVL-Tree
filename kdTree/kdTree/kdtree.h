@@ -4,6 +4,14 @@
 using namespace std;
 
 template <typename Comparable>
+void PrintVector(vector<Comparable> v) {
+	printf_s("(");
+	for (int i = 0; i < v.size(); i++) {
+		printf_s("%d,", v[i]);
+	}
+	printf_s("\b)");
+}
+template <typename Comparable>
 class kdTree {
 public:
 	kdTree(int n) :root(NULL),k(n) {
@@ -14,13 +22,21 @@ public:
 		vector<Comparable> data;
 		kdNode *left;
 		kdNode *right;
-		kdNode(const vector<Comparable> & theElement, kdNode*lt, kdNode*rt, int h = 0) :element(theElement), left(lt), right(rt){}
+		bool isActive;
+		kdNode(const vector<Comparable> & theElement, kdNode*lt=NULL, kdNode*rt=NULL) :data(theElement), left(lt), right(rt),isActive(true){}
 	};
-	void insert(const Comparable &x) {
-		insert(x, root);
+	void insert(const vector<Comparable> &x) {
+		insert(x, root,0);
 	}
-	void remove(const Comparable &x) {
-		remove(x, root);
+
+	bool contians(const vector<Comparable> &x) {
+		kdNode *p = contains(x, root, 0);
+		return p == NULL ? false : true;
+	}
+
+	void remove(const vector<Comparable> &x) {
+		kdNode *p = contains(x, root, 0);
+		if (p != NULL)p->isActive = false;
 	}
 	void listAll() {
 		printf_s("\n----------------------------");
@@ -32,6 +48,53 @@ public:
 		}
 		printf_s("\n----------------------------");
 	}
+
+	void makeEmpty() {
+		makeEmpty(root);
+	}
+	void printRange(const vector<Comparable>&low, const vector<Comparable>&high) {
+		printRange(low, high, root, 0);
+	}
+	
+private:
+	void printRange(const vector<Comparable>&low, const vector<Comparable>&high, kdNode*t, int level) {
+		if (t != NULL) {
+			int nl = nextLevel(level);
+			bool isIn = true;
+			for (int i = 0; i < k; i++) {
+				if (low[i] > t->data[i] || high[i] < t->data[i])isIn = false;
+			}
+			if (isIn)PrintVector(t->data);
+
+			if (low[level] <= t->data[level])
+				printRange(low, high, t->left, nl);
+			if (high[level] >= t->data[level])
+				printRange(low, high, t->right, nl);
+		}
+	}
+	int nextLevel(int level) {
+		int nextL = level + 1;
+		if (nextL == k)nextL = 0;
+		return nextL;
+	}
+	void makeEmpty(kdNode*&t) {
+		if (t != NULL) {
+			makeEmpty(t->left);
+			makeEmpty(t->right);;
+			delete t;
+			t = NULL;
+		}
+	}
+	kdNode* contains(const vector<Comparable> &x, kdNode *t, int level) {
+		int nl = nextLevel(level);
+		if (t == NULL)return false;
+		else if (x[level] < t->data[level])
+			return contains(x, t->left, nl);
+		else if (t->data[level] < x[level])
+			return contains(x, t->right, nl);
+		else if (x == t->data) return t;
+		else return contains(x, t->right, nl);
+	}
 	void list(kdNode*&t, int depth)const {
 		if (t != NULL) {
 			list(t->right, depth + 1);
@@ -42,203 +105,20 @@ public:
 			if (depth > 0)
 				printf_s("--");
 
-			printf_s("%2d", t->element);
+			if (t->isActive == true)PrintVector(t->data);
 			list(t->left, depth + 1);
 		}
 	}
-	void makeEmpty() {
-		makeEmpty(root);
-	}
-	void contians(const Comparable &x) {
-		if (contains(x, root))printf_s("\nFounded!");
-		else printf_s("\nNotFounded");
-	}
-	void search(int &k) {
-		int n = 0;
-		kdNode *p = search(k, n, root);
-		if (p == NULL)printf_s("\nError!");
-		else {
-			printf_s("The %dth element is %d, the tree node is:\n", k, p->element);
-			list(p, 1);
-		}
-	}
-	int numLessThanK(int &k) {
-		int n = 0;
-		if (root != NULL)
-			numLessThanK(k, n, root);
-		return n;
-	}
-private:
-	void numLessThanK(int &k, int &n, kdNode *&t)const {
-		if (t->element < k) {
-			n++;
-			if (t->right != NULL)numLessThanK(k, n, t->right);
-		}
-		if (t->left != NULL) {
-			numLessThanK(k, n, t->left);
-		}
-	}
-	kdNode * search(int &k, int &n, kdNode *&t)const {
-		kdNode *p = NULL;
-		if (t->left != NULL) {
-			p = search(k, n, t->left);
-		}
-		n++;
-		if (n == k)p = t;
-		if (p != NULL)return p;
+	void insert(const vector<Comparable> &x, kdNode *&t, int level) {
+		int nl = nextLevel(level);
+		if (t == NULL)
+			t = new kdNode(x);
+		else if (x[level] < t->data[level])
+			insert(x, t->left, nl);
+		else if (x == t->data)t->isActive = true;
 		else
-			if (t->right != NULL) {
-				p = search(k, n, t->right);
-			}
-		return p;
-
-	}
-	bool contains(const Comparable &x, kdNode *t)const {
-		if (t == NULL)return false;
-		else if (x < t->element)
-			return contains(x, t->left);
-		else if (t->element < x)
-			return contains(x, t->right);
-		else return true;
-	}
-	void makeEmpty(kdNode*&t) {
-		if (t != NULL) {
-			makeEmpty(t->left);
-			makeEmpty(t->right);;
-			delete t;
-			t = NULL;
-		}
-	}
-	void insert(const Comparable &x, kdNode *&t) {
-		if (t == NULL) {
-			t = new kdNode(x, NULL, NULL);
-		}
-		else if (x < t->element) {
-			insert(x, t->left);
-			if (height(t->left) - height(t->right) == 2) {
-				if (x < t->left->element)rotateWithLeftChild(t);
-				else doubleWithLeftChild(t);
-			}
-		}
-		else if (t->element < x) {
-			insert(x, t->right);
-			if (height(t->left) - height(t->right) == -2) {
-				if (t->right->element<x)rotateWithRightChild(t);
-				else doubleWithRightChild(t);
-			}
-		}
-		else {
-			//рясп
-		}
-		t->height = max(height(t->left), height(t->right)) + 1;
-	}
-	void remove(const Comparable &x, kdNode *&t) {
-		if (t != NULL) {
-			if (x < t->element) {
-				remove(x, t->left);
-				if (height(t->left) - height(t->right) == -2) {
-					if (height(t->right) - height(t->right->left) >= 2)rotateWithRightChild(t);
-					else doubleWithRightChild(t);
-				}
-			}
-			else if (t->element < x) {
-				remove(x, t->right);
-				if (height(t->left) - height(t->right) == 2) {
-					if (height(t->left) - height(t->left->right) >= 2)rotateWithLeftChild(t);
-					else doubleWithLeftChild(t);
-				}
-			}
-			else {
-				if (t->right != NULL) {
-					kdNode *oldNode = t;
-					t = findMinAndRemove(t->right);
-					t->left = oldNode->left;
-					if (t == oldNode->right)t->right = NULL;
-					else
-						t->right = oldNode->right;
-					delete oldNode;
-				}
-				else if (t->left != NULL) {
-					kdNode *oldNode = t;
-					t = findMaxAndRemove(t->left);
-					t->left = oldNode->left;
-					if (t == oldNode->left)t->left = NULL;
-					else
-						t->right = oldNode->right;
-					delete oldNode;
-				}
-				else {
-					delete t;
-					t = NULL;
-				}
-			}
-			if (t != NULL)
-				t->height = max(height(t->left), height(t->right)) + 1;
-		}
-	}
-	kdNode* findMinAndRemove(kdNode*t) {
-		kdNode*p;
-		if (t->left == NULL) {
-			p = t;
-		}
-		else {
-			p = findMinAndRemove(t->left);
-			if (t->left == p) {
-				t->left = p->right;
-			}
-			if (height(t->left) - height(t->right) == -2) {
-				if (height(t->right) - height(t->right->left) >= 2)rotateWithRightChild(t);
-				else doubleWithRightChild(t);
-			}
-		}
-		t->height = max(height(t->left), height(t->right)) + 1;
-		return p;
-	}
-	kdNode* findMaxAndRemove(kdNode*t) {
-		kdNode*p;
-		if (t->right == NULL) {
-			p = t;
-		}
-		else {
-			p = findMaxAndRemove(t->left);
-			if (t->right == p) {
-				t->right = p->left;
-			}
-			if (height(t->left) - height(t->right) == 2) {
-				if (height(t->left) - height(t->left->right) >= 2)rotateWithLeftChild(t);
-				else doubleWithLeftChild(t);
-			}
-		}
-		t->height = max(height(t->left), height(t->right)) + 1;
-		return p;
-	}
-	void rotateWithLeftChild(kdNode * & k2) {
-		kdNode*k1 = k2->left;
-		k2->left = k1->right;
-		k1->right = k2;
-		k2->height = max(height(k2->left), height(k2->right)) + 1;
-		k1->height = max(height(k1->left), k2->height) + 1;
-		k2 = k1;
-	}
-	void rotateWithRightChild(kdNode * & k2) {
-		kdNode*k1 = k2->right;
-		k2->right = k1->left;
-		k1->left = k2;
-		k2->height = max(height(k2->left), height(k2->right)) + 1;
-		k1->height = max(height(k1->left), k2->height) + 1;
-		k2 = k1;
-	}
-	void doubleWithLeftChild(kdNode * & k3) {
-		rotateWithRightChild(k3->left);
-		rotateWithLeftChild(k3);
-	}
-	void doubleWithRightChild(kdNode * & k3) {
-		rotateWithLeftChild(k3->right);
-		rotateWithRightChild(k3);
+			insert(x, t->right, nl);
 	}
 	kdNode *root;
 	int k;
 };
-int max(int a, int b) {
-	return a < b ? b : a;
-}

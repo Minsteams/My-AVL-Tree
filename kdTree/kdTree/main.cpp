@@ -1,8 +1,11 @@
-#include"kdtree.h"
+#include<iostream>
 #include<conio.h>
+#include<vector>
+#include"kdtree.h"
 using namespace std;
 
 int k;
+extern void PrintVector(vector<int> &v);
 void initVector(vector<int> &tp) {
 	tp.clear();
 	for (int i = 0; i < k; i++) {
@@ -56,7 +59,7 @@ void main() {
 	int x = 0;	
 	printf_s("Please input k:");
 	scanf_s("%d", &k);
-	kdTree<int> kt1(k);
+	kdTree kt1(k);
 	vector<int> tp;
 	do {
 		initVector(tp);

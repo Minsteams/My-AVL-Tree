@@ -113,6 +113,7 @@
     <ClInclude Include="kdtree.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="kdtree.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

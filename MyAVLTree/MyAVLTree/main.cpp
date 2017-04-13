@@ -1,10 +1,11 @@
 #include"AVLTreeClass.h"
 #include<conio.h>
+#include<iostream>
 using namespace std;
 
 void main() {
 	int x=0;
-	AvlTree<int> at1;
+	AvlTree at1;
 	do{
 		printf_s("\n----------------------------");
 		printf_s("\nThis is your tree.");

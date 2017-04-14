@@ -14,7 +14,7 @@ public:
 	void insert(const vector<int> &x);
 	bool contians(const vector<int> &x);
 	void remove(const vector<int> &x);
-	void listAll();
+	void listAll(FILE *fp=NULL);
 	void makeEmpty();
 	void printRange(const vector<int>&low, const vector<int>&high);
 	
@@ -23,7 +23,7 @@ private:
 	int nextLevel(int level);
 	void makeEmpty(kdNode*&t);
 	kdNode* contains(const vector<int> &x, kdNode *t, int level);
-	void list(kdNode*&t, int depth)const;
+	void list(kdNode*&t, int depth, FILE *fp=NULL)const;
 	void insert(const vector<int> &x, kdNode *&t, int level);
 	kdNode *root;
 	int k;

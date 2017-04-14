@@ -21,9 +21,18 @@
     <ClCompile Include="kdtree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="myFilePrint.cpp">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mainFunc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kdtree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="myFilePrint.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,3 +1,4 @@
+/* ÷∂Ø ‰»Î
 #include"AVLTreeClass.h"
 #include<conio.h>
 #include<iostream>
@@ -92,3 +93,4 @@ void main() {
 		printf_s("\nPress Any Botton to continue...");
 	} while (_getch()!=27);
 }
+*/

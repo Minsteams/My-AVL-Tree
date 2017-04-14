@@ -1,5 +1,6 @@
 #pragma once
 
+
 class AvlNode {
 public:
 	int element;
@@ -15,11 +16,11 @@ public :
 	int height(AvlNode *t= (AvlNode*)-1)const;
 	void insert(const int &x);
 	void remove(const int &x);
-	void listAll();
-	void list(AvlNode*&t, int depth)const;
+	void listAll(FILE *fp=NULL);
+	void list(AvlNode*&t, int depth,FILE*fp=NULL)const;
 	void makeEmpty();
-	void contians(const int &x);
-	void search(int &k);
+	void contians(const int &x, FILE*fp = NULL);
+	void search(int &k, FILE*fp = NULL);
 	int numLessThanK(int &k);
 private:
 	void numLessThanK(int &k, int &n, AvlNode *&t)const;

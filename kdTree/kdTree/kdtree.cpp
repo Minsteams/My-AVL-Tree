@@ -1,15 +1,10 @@
 #include<iostream>
 #include<vector>
 #include"kdtree.h"
+#include"myFilePrint.h"
 using namespace std;
 
-void PrintVector(vector<int> &v) {
-	printf_s("(");
-	for (int i = 0; i < v.size(); i++) {
-		printf_s("%d,", v[i]);
-	}
-	printf_s("\b)");
-}
+extern void PrintVector(vector<int> &v, FILE *fp = NULL);
 kdTree::kdTree(int n) :root(NULL), k(n) {
 
 }
@@ -27,15 +22,15 @@ void kdTree::remove(const vector<int> &x) {
 	kdNode *p = contains(x, root, 0);
 	if (p != NULL)p->isActive = false;
 }
-void kdTree::listAll() {
-	printf_s("\n----------------------------");
+void kdTree::listAll(FILE *fp) {
+	mfprint(fp,"\n----------------------------");
 	if (root == NULL) {
-		printf_s("\nThis tree is EMPTY!");
+		mfprint(fp,"\nThis tree is EMPTY!");
 	}
 	else {
-		list(root, 0);
+		list(root, 0,fp);
 	}
-	printf_s("\n----------------------------");
+	mfprint(fp,"\n----------------------------");
 }
 
 void kdTree::makeEmpty() {
@@ -82,18 +77,18 @@ kdNode* kdTree::contains(const vector<int> &x, kdNode *t, int level) {
 	else if (x == t->data) return t;
 	else return contains(x, t->right, nl);
 }
-void kdTree::list(kdNode*&t, int depth)const {
+void kdTree::list(kdNode*&t, int depth, FILE *fp)const {
 	if (t != NULL) {
-		list(t->right, depth + 1);
-		printf_s("\n");
+		list(t->right, depth + 1,fp);
+		mfprint(fp,"\n");
 		for (int i = 0; i < depth; i++) {
-			printf_s("    ");
+			mfprint(fp,"    ");
 		}
 		if (depth > 0)
-			printf_s("--");
+			mfprint(fp,"--");
 
-		if (t->isActive == true)PrintVector(t->data);
-		list(t->left, depth + 1);
+		if (t->isActive == true)PrintVector(t->data,fp);
+		list(t->left, depth + 1,fp);
 	}
 }
 void kdTree::insert(const vector<int> &x, kdNode *&t, int level) {

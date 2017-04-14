@@ -1,11 +1,24 @@
 #include<iostream>
 #include<conio.h>
 #include<vector>
+#include<time.h>
 #include"kdtree.h"
+#include"myFilePrint.h"
 using namespace std;
 
 int k;
-extern void PrintVector(vector<int> &v);
+void PrintVector(vector<int> &v, FILE *fp = NULL) {
+	mfprint(fp, "(");
+	int i = 0;
+	for (; i < v.size()-1; i++) {
+		mfprint(fp, "%d,", v[i]);
+	}
+	for (; i < v.size(); i++) {
+		mfprint(fp, "%d", v[i]);
+	}
+	mfprint(fp, ")");
+}
+
 void initVector(vector<int> &tp) {
 	tp.clear();
 	for (int i = 0; i < k; i++) {
@@ -57,17 +70,49 @@ void inputVector(vector<int> &tp) {
 }
 void main() {
 	int x = 0;	
+	
+	kdTree *kt=NULL;
+	vector<int> tp;
+	/*
 	printf_s("Please input k:");
 	scanf_s("%d", &k);
-	kdTree kt1(k);
-	vector<int> tp;
+	kt = new kdTree(k);
+	*/
+	FILE *in;
+	fopen_s(&in, "in_kdtree.txt", "r");
+	if (in != NULL) {
+		fscanf_s(in, "%d", &k);
+		kt = new kdTree(k);
+
+		while (!feof(in)) {
+			vector<int> temp;
+			int ti;
+			for (int i = 0; i < k; i++) {
+				fscanf_s(in, "%d", &ti);
+				temp.push_back(ti);
+			}
+			kt->insert(temp);
+		}
+		fclose(in);
+	}
+	else
+		exit(1);
+	FILE *out;
+	remove("out_kdtree.txt");
+	fopen_s(&out, "out_kdtree.txt", "w");
+	mfprint(out, "----------------------------");
+	mfprint(out, "\nThis is your tree.");
+	kt->listAll(out);
+	fclose(out);
+
 	do {
 		initVector(tp);
 		printf_s("\n----------------------------");
 		printf_s("\nThis is your tree.");
-		kt1.listAll();
+		kt->listAll();
 		x = -1;
-		printf_s("\nThere are several selections, input number to use relevant function:\n1.Insert a number or a series of number to the tree.\n2.Remove a number or a series of number to the tree.\n3.Search for all datas in a given range.\n4.Clear it up, make it Empty.\n5.Check if tree contians the paticular element.\nPress ESC to Exit!");
+		clock_t start = -1, end;
+		printf_s("\nThere are several selections, input number to use relevant function:\n1.Insert a number or a series of number to the tree.\n2.Remove a number or a series of number to the tree.\n3.Search for all datas in a given range.\n4.Clear it up, make it Empty.\n5.Check if tree contians the paticular element.\nPress ESC to Quit!");
 		printf_s("\n----------------------------");
 		switch (_getch()) {
 		case 27:exit(0); break;
@@ -85,7 +130,7 @@ void main() {
 					if (b == ')') {
 						if (order < k) tp[order++] = x;
 						input = false;
-						kt1.insert(tp);
+						kt->insert(tp);
 					}
 					else if (order == k) {
 						printf_s("\b");
@@ -132,7 +177,7 @@ void main() {
 					if (b == ')') {
 						if (order < k) tp[order++] = x;
 						input = false;
-						kt1.remove(tp);
+						kt->remove(tp);
 					}
 					else if (order == k) {
 						printf_s("\b");
@@ -174,12 +219,14 @@ void main() {
 			inputVector(low);
 			inputVector(tp);
 			printf_s("\nResult:\n");
-			kt1.printRange(low, tp);
+			start = clock();
+			kt->printRange(low, tp);
 			printf_s("\nSearch over");
 			break;
 		}
 		case '4': {
-			kt1.makeEmpty();
+			start = clock();
+			kt->makeEmpty();
 			printf_s("\nEmpty now.");
 			break;
 		}
@@ -188,13 +235,17 @@ void main() {
 			PrintVector(tp);
 			printf_s(" like this to check:  ");
 			inputVector(tp);
-			if (kt1.contians(tp))printf_s("\nFounded!");
+			start = clock();
+			if (kt->contians(tp))printf_s("\nFounded!");
 			else printf_s("\nNot Founded.");
 			break;
 		}
 		default:printf_s("\nNothing done."); break;
 		}
+		end = clock();
+		if (start > 0)printf_s("\nUse time:%lf", (double)(end - start) / CLOCKS_PER_SEC);
 		printf_s("\n----------------------------");
 		printf_s("\nPress Any Botton to continue...");
 	} while (_getch() != 27);
+	delete kt;
 }

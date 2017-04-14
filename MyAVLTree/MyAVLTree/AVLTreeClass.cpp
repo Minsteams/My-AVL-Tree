@@ -1,5 +1,6 @@
 #include<iostream>
 #include"AVLTreeClass.h"
+#include"myFilePrint.h"
 
 AvlTree::AvlTree() :root(NULL) {
 
@@ -15,43 +16,43 @@ void AvlTree::insert(const int &x) {
 void AvlTree::remove(const int &x) {
 	remove(x, root);
 }
-void AvlTree::listAll() {
-	printf_s("\n----------------------------");
+void AvlTree::listAll(FILE*fp) {
+	mfprint(fp,"\n----------------------------");
 	if (root == NULL) {
-		printf_s("\nThis tree is EMPTY!");
+		mfprint(fp,"\nThis tree is EMPTY!");
 	}
 	else {
-		list(root, 0);
+		list(root, 0,fp);
 	}
-	printf_s("\n----------------------------");
+	mfprint(fp,"\n----------------------------");
 }
-void AvlTree::list(AvlNode*&t, int depth)const {
+void AvlTree::list(AvlNode*&t, int depth,FILE*fp)const {
 	if (t != NULL) {
-		list(t->right, depth + 1);
-		printf_s("\n");
+		list(t->right, depth + 1,fp);
+		mfprint(fp,"\n");
 		for (int i = 0; i < depth; i++) {
-			printf_s("    ");
+			mfprint(fp,"    ");
 		}
 		if (depth > 0)
-			printf_s("--");
+			mfprint(fp,"--");
 
-		printf_s("%2d", t->element);
-		list(t->left, depth + 1);
+		mfprint(fp,"%2d", t->element);
+		list(t->left, depth + 1,fp);
 	}
 }
 void AvlTree::makeEmpty() {
 	makeEmpty(root);
 }
-void AvlTree::contians(const int &x) {
-	if (contains(x, root))printf_s("\nFounded!");
-	else printf_s("\nNotFounded");
+void AvlTree::contians(const int &x, FILE*fp) {
+	if (contains(x, root))mfprint(fp,"\nFounded!");
+	else mfprint(fp, "\nNotFounded");
 }
-void AvlTree::search(int &k) {
+void AvlTree::search(int &k, FILE*fp) {
 	int n = 0;
 	AvlNode *p = search(k, n, root);
-	if (p == NULL)printf_s("\nError!");
+	if (p == NULL)mfprint(fp, "\nError!");
 	else {
-		printf_s("The %dth element is %d, the tree node is:\n", k, p->element);
+		mfprint(fp, "The %dth element is %d, the tree node is:\n", k, p->element);
 		list(p, 1);
 	}
 }

@@ -1,0 +1,7 @@
+DataCount:60000
+NumberMax:60000
+Test data created!
+Use time:0.172972
+Press any key to build the avl tree...
+Builded!
+Use time:0.092746

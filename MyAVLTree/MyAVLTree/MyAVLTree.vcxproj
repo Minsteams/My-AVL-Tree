@@ -111,10 +111,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AVLTreeClass.h" />
+    <ClInclude Include="myFilePrint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AVLTreeClass.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainFunction.cpp" />
+    <ClCompile Include="myFilePrint.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

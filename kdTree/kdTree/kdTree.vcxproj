@@ -111,10 +111,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="kdtree.h" />
+    <ClInclude Include="myFilePrint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kdtree.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainFunc.cpp" />
+    <ClCompile Include="myFilePrint.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

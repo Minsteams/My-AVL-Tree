@@ -1,0 +1,7 @@
+K:4
+DataCount:5000
+NumberMax:300
+Test data created!
+Use time:0.042614
+Builded!
+Use time:0.016575
